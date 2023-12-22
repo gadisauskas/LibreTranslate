@@ -2,7 +2,7 @@
 
 SETLOCAL
 
-SET LT_PORT=5000
+SET LT_PORT=5045
 
 :loop
 IF NOT "%1"=="" (

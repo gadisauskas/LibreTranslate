@@ -106,7 +106,7 @@ pip install libretranslate
 libretranslate [args]
 ```
 
-Then open a web browser to <http://localhost:5000>
+Then open a web browser to <http://localhost:5045>
 
 On Ubuntu 20.04 you can also use the install script available at <https://github.com/argosopentech/LibreTranslate-init>
 
@@ -168,7 +168,7 @@ Arguments passed to the process or set via environment variables are split into 
 | Argument                    | Description                                                                                                 | Default Parameter    | Env. name                    |
 |-----------------------------|-------------------------------------------------------------------------------------------------------------| -------------------- |------------------------------|
 | --host                      | Set host to bind the server to                                                                              | `127.0.0.1`          | LT_HOST                      |
-| --port                      | Set port to bind the server to                                                                              | `5000`               | LT_PORT                      |
+| --port                      | Set port to bind the server to                                                                              | `5045`               | LT_PORT                      |
 | --char-limit                | Set character limit                                                                                         | `No limit`               | LT_CHAR_LIMIT                |
 | --req-limit                 | Set maximum number of requests per minute per client (outside of limits set by api keys)                    | `No limit`               | LT_REQ_LIMIT                 |
 | --req-limit-storage         | Storage URI to use for request limit data storage. See [Flask Limiter](https://flask-limiter.readthedocs.io/en/stable/configuration.html) | `memory://` | LT_REQ_LIMIT_STORAGE |
@@ -184,7 +184,7 @@ Arguments passed to the process or set via environment variables are split into 
 | --load-only                 | Set available languages                                                                                     | `Empty (use all from argostranslate)`    | LT_LOAD_ONLY                 |
 | --threads                   | Set number of threads                                                                                       | `4`    | LT_THREADS                 |
 | --metrics-auth-token        | Protect the /metrics endpoint by allowing only clients that have a valid Authorization Bearer token         | `Empty (no auth required)`    | LT_METRICS_AUTH_TOKEN            |
-| --url-prefix                | Add prefix to URL: example.com:5000/url-prefix/                                                             | `/`    | LT_URL_PREFIX            |
+| --url-prefix                | Add prefix to URL: example.com:5045/url-prefix/                                                             | `/`    | LT_URL_PREFIX            |
 
 ### Notes:
 
@@ -216,13 +216,13 @@ Alternatively you can also run the `scripts/install_models.py` script.
 
 ```bash
 pip install gunicorn
-gunicorn --bind 0.0.0.0:5000 'wsgi:app'
+gunicorn --bind 0.0.0.0:5045 'wsgi:app'
 ```
 
 You can pass application arguments directly to Gunicorn via:
 
 ```bash
-gunicorn --bind 0.0.0.0:5000 'wsgi:app(api_keys=True)'
+gunicorn --bind 0.0.0.0:5045 'wsgi:app(api_keys=True)'
 ```
 
 ## Run with Kubernetes
@@ -265,7 +265,7 @@ ltmanage keys
 
 LibreTranslate has Prometheus [exporter](https://prometheus.io/docs/instrumenting/exporters/) capabilities when you pass the `--metrics` argument at startup (disabled by default). When metrics are enabled, a `/metrics` endpoint is mounted on the instance:
 
-<http://localhost:5000/metrics>
+<http://localhost:5045/metrics>
 
 ```promql
 # HELP libretranslate_http_requests_in_flight Multiprocess metric
@@ -288,7 +288,7 @@ scrape_configs:
       #credentials: "mytoken"
 
     static_configs:
-      - targets: ["localhost:5000"]
+      - targets: ["localhost:5045"]
 ```
 
 To secure the `/metrics` endpoint you can also use `--metrics-auth-token mytoken`.
@@ -299,7 +299,7 @@ If you use Gunicorn, make sure to create a directory for storing multiprocess da
 mkdir -p /tmp/prometheus_data
 rm /tmp/prometheus_data/*
 export PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus_data
-gunicorn -c scripts/gunicorn_conf.py --bind 0.0.0.0:5000 'wsgi:app(metrics=True)'
+gunicorn -c scripts/gunicorn_conf.py --bind 0.0.0.0:5045 'wsgi:app(metrics=True)'
 ```
 
 ## Language Bindings
@@ -450,10 +450,10 @@ In short, no. [You need to buy an API key](https://portal.libretranslate.com). Y
 Yes, here are config examples for Apache2 and Caddy that redirect a subdomain (with HTTPS certificate) to LibreTranslate running on a docker at localhost.
 
 ```bash
-sudo docker run -ti --rm -p 127.0.0.1:5000:5000 libretranslate/libretranslate
+sudo docker run -ti --rm -p 127.0.0.1:5045:5045 libretranslate/libretranslate
 ```
 
-You can remove `127.0.0.1` on the above command if you want to be able to access it from `domain.tld:5000`, in addition to `subdomain.domain.tld` (this can be helpful to determine if there is an issue with Apache2 or the docker container).
+You can remove `127.0.0.1` on the above command if you want to be able to access it from `domain.tld:5045`, in addition to `subdomain.domain.tld` (this can be helpful to determine if there is an issue with Apache2 or the docker container).
 
 Add `--restart unless-stopped` if you want this docker to start on boot, unless manually stopped.
 
@@ -480,8 +480,8 @@ Remove `#` on the ErrorLog and CustomLog lines to log requests.
 <VirtualHost *:443>
     ServerName https://[YOUR_DOMAIN]
 
-    ProxyPass / http://127.0.0.1:5000/
-    ProxyPassReverse / http://127.0.0.1:5000/
+    ProxyPass / http://127.0.0.1:5045/
+    ProxyPassReverse / http://127.0.0.1:5045/
     ProxyPreserveHost On
 
     SSLEngine on
@@ -508,7 +508,7 @@ Replace [YOUR_DOMAIN] with your full domain; for example, `translate.domain.tld`
 ```Caddyfile
 #Libretranslate
 [YOUR_DOMAIN] {
-  reverse_proxy localhost:5000
+  reverse_proxy localhost:5045
 }
 ```
 
@@ -590,7 +590,7 @@ server {
   gzip_types text/xml text/javascript font/ttf font/eot font/otf application/x-javascript application/atom+xml application/javascript application/json application/manifest+json application/rss+xml application/x-web-app-manifest+json application/xhtml+xml application/xml image/svg+xml image/x-icon text/css text/plain;
 
   location / {
-      proxy_pass http://127.0.0.1:5000/;
+      proxy_pass http://127.0.0.1:5045/;
       proxy_set_header Host $http_host;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

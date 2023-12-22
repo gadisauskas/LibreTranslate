@@ -33,7 +33,7 @@ imagePullSecrets: []
 # Service settings
 service:
   type: ClusterIP
-  port: 5000
+  port: 5045
 
 # Ingress settings
 ingress:
@@ -144,7 +144,7 @@ appSettings:
 # Configuration Parameters
 appConfig:
   host:                  "0.0.0.0"              # Set host to bind the server to (Default: 127.0.0.1)
-  port:                  "5000"                 # Set port to bind the server to (Default: 5000)
+  port:                  "5045"                 # Set port to bind the server to (Default: 5045)
   charLimit:             "null"                 # Set character limit (Default: No limit)
   reqLimit:              "null"                 # Set maximum number of requests per minute per client (outside of limits set by api keys) (Default: No limit)
   reqLimitStorage:       "memory://"            # Storage URI to use for request limit data storage. See Flask Limiter (Default: memory://)
@@ -161,4 +161,4 @@ appConfig:
   loadOnly:              ""                     # Set available languages (Default: Empty (use all from argostranslate))
   threads:               "4"                    # Set number of threads (Default: 4)
   metricsAuthToken:      ""                     # Protect the /metrics endpoint by allowing only clients that have a valid Authorization Bearer token (Default: Empty (no auth required))
-  urlPrefix:             ""                    # Add prefix to URL: example.com:5000/url-prefix/ (Default: /)
+  urlPrefix:             ""                    # Add prefix to URL: example.com:5045/url-prefix/ (Default: /)

@@ -39,5 +39,5 @@ RUN if [ "$with_models" = "true" ]; then  \
   fi \
   fi
 
-EXPOSE 5000
+EXPOSE 5045
 ENTRYPOINT [ "./venv/bin/libretranslate", "--host", "0.0.0.0" ]
